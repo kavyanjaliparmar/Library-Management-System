@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="CENTER" spacing="20" styleClass="login-container"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="application.controllers.LoginController">
+    
+    <padding>
+        <Insets top="20" right="40" bottom="20" left="40"/>
+    </padding>
+
+    <Text styleClass="title-text" text="Library Management System"/>
+    
+    <VBox spacing="10" styleClass="form-container">
+        <TextField fx:id="usernameField" promptText="Username" styleClass="input-field"/>
+        <PasswordField fx:id="passwordField" promptText="Password" styleClass="input-field"/>
+        
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <ComboBox fx:id="roleComboBox" promptText="Select Role" styleClass="role-combo"/>
+            <Button text="Login" onAction="#handleLogin" styleClass="login-button"/>
+        </HBox>
+        
+        <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"/>
+    </VBox>
+</VBox> 

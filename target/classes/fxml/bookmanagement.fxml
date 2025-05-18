@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10">
+    <HBox spacing="10">
+        <TextField fx:id="searchField" promptText="Search books..." HBox.hgrow="ALWAYS"/>
+        <Button text="Add Book" onAction="#handleAddBook"/>
+    </HBox>
+
+    <TableView fx:id="bookTable" prefHeight="400">
+        <columns>
+            <TableColumn fx:id="idCol" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="titleCol" text="Title" prefWidth="200"/>
+            <TableColumn fx:id="authorCol" text="Author" prefWidth="150"/>
+            <TableColumn fx:id="publisherCol" text="Publisher" prefWidth="150"/>
+            <TableColumn fx:id="yearCol" text="Year" prefWidth="80"/>
+        </columns>
+    </TableView>
+</VBox>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.HomeController">
+    
+    <!-- Top Navigation Bar -->
+    <top>
+        <HBox styleClass="nav-bar" spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <Label text="Library Management System" styleClass="nav-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="userLabel" text="Welcome, User"/>
+            <Button text="Logout" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+    
+    <!-- Left Sidebar -->
+    <left>
+        <VBox styleClass="sidebar" spacing="10" prefWidth="200">
+            <padding>
+                <Insets top="20" right="10" bottom="20" left="10"/>
+            </padding>
+            <Button text="Dashboard" onAction="#showDashboard" maxWidth="Infinity"/>
+            <Button text="Books" onAction="#showBooks" maxWidth="Infinity"/>
+            <Button text="Issue/Return" onAction="#showTransactions" maxWidth="Infinity"/>
+            <Button text="Reservations" onAction="#showReservations" maxWidth="Infinity"/>
+            <Button text="Categories" onAction="#showCategories" maxWidth="Infinity"/>
+        </VBox>
+    </left>
+    
+    <!-- Main Content Area -->
+    <center>
+        <StackPane fx:id="contentArea">
+            <!-- Default Dashboard View -->
+            <VBox spacing="20" alignment="CENTER">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+                
+                <GridPane hgap="20" vgap="20">
+                    <!-- Statistics Cards -->
+                    <VBox styleClass="stat-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Total Books"/>
+                        <Label fx:id="totalBooksLabel" text="0" styleClass="stat-number"/>
+                    </VBox>
+                    
+                    <VBox styleClass="stat-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Books Issued"/>
+                        <Label fx:id="issuedBooksLabel" text="0" styleClass="stat-number"/>
+                    </VBox>
+                    
+                    <VBox styleClass="stat-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label text="Active Reservations"/>
+                        <Label fx:id="reservationsLabel" text="0" styleClass="stat-number"/>
+                    </VBox>
+                </GridPane>
+                
+                <!-- Recent Activities Table -->
+                <TableView fx:id="recentActivitiesTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Date" fx:id="dateColumn"/>
+                        <TableColumn text="Activity" fx:id="activityColumn"/>
+                        <TableColumn text="Book" fx:id="bookColumn"/>
+                        <TableColumn text="User" fx:id="userColumn"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </StackPane>
+    </center>
+    
+</BorderPane> 
