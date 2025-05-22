@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Management System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+    .container {
+      padding: 20px;
+    }
+    .book-card {
+      background-color: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .book-card h3 {
+      margin: 0;
+    }
+    .form, .book-list {
+      max-width: 400px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+    }
+    .toggle {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .toggle a {
+      cursor: pointer;
+      color: #4CAF50;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Library Management System</h1>
+  </header>
+
+  <div class="container">
+    <div class="form" id="loginForm">
+      <h2>Login</h2>
+      <input type="text" id="loginUsername" placeholder="Username" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button onclick="login()">Login</button>
+      <div class="toggle">Don't have an account? <a onclick="toggleForms('register')">Register</a></div>
+    </div>
+
+    <div class="form" id="registerForm" style="display:none;">
+      <h2>Register</h2>
+      <input type="text" id="registerUsername" placeholder="Username" />
+      <input type="password" id="registerPassword" placeholder="Password" />
+      <select id="registerRole">
+        <option value="STUDENT">Student</option>
+        <option value="ADMIN">Admin</option>
+      </select>
+      <button onclick="register()">Register</button>
+      <div class="toggle">Already have an account? <a onclick="toggleForms('login')">Login</a></div>
+    </div>
+
+    <div class="book-list" id="bookList" style="display:none;">
+      <h2>Books</h2>
+      <div id="books"></div>
+    </div>
+  </div>
+
+  <script>
+    const apiBase = 'http://localhost:8080/api'; // Change to your backend base URL
+
+    function toggleForms(form) {
+      document.getElementById('loginForm').style.display = form === 'login' ? 'block' : 'none';
+      document.getElementById('registerForm').style.display = form === 'register' ? 'block' : 'none';
+    }
+
+    function login() {
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+
+      fetch(`${apiBase}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          document.getElementById('loginForm').style.display = 'none';
+          document.getElementById('bookList').style.display = 'block';
+          loadBooks();
+        } else {
+          alert('Login failed');
+        }
+      });
+    }
+
+    function register() {
+      const username = document.getElementById('registerUsername').value;
+      const password = document.getElementById('registerPassword').value;
+      const role = document.getElementById('registerRole').value;
+
+      fetch(`${apiBase}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, role })
+      })
+      .then(res => {
+        if (res.ok) {
+          alert('Registration successful! You can now log in.');
+          toggleForms('login');
+        } else {
+          res.text().then(text => alert('Registration failed: ' + text));
+        }
+      });
+    }
+
+    function loadBooks() {
+      fetch(`${apiBase}/books`, {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+      })
+      .then(res => res.json())
+      .then(books => {
+        const booksDiv = document.getElementById('books');
+        booksDiv.innerHTML = '';
+        books.forEach(book => {
+          const bookCard = document.createElement('div');
+          bookCard.className = 'book-card';
+          bookCard.innerHTML = `<h3>${book.title}</h3><p>Author: ${book.author}</p>`;
+          booksDiv.appendChild(bookCard);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

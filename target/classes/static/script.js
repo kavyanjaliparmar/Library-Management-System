@@ -1,6 +1,9 @@
 // Global variables
 let currentUser = null;
 
+// API endpoints
+const API_URL = 'http://localhost:8080/api';
+
 // Show/Hide functions
 function showLogin() {
     document.getElementById('loginForm').classList.remove('hidden');
@@ -30,28 +33,38 @@ async function login() {
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
 
+    console.log('Attempting login with:', { username });
+
     try {
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ username, password })
         });
 
+        console.log('Login response status:', response.status);
+        const data = await response.json();
+        console.log('Login response data:', data);
+        
         if (response.ok) {
-            const data = await response.json();
-            currentUser = data;
-            document.getElementById('username').textContent = currentUser.username;
-            if (currentUser.role === 'ROLE_ADMIN') {
-                document.getElementById('adminPanel').classList.remove('hidden');
-            }
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('username', data.username);
+            localStorage.setItem('role', data.role);
+            
+            currentUser = {
+                username: data.username,
+                role: data.role
+            };
+            
             showMain();
         } else {
-            alert('Invalid username or password');
+            alert(data.message || 'Login failed');
         }
     } catch (error) {
-        alert('Error during login');
+        console.error('Login error:', error);
+        alert('Error during login: ' + error.message);
     }
 }
 
@@ -61,36 +74,46 @@ async function register() {
     const fullName = document.getElementById('regFullName').value;
     const email = document.getElementById('regEmail').value;
 
+    console.log('Attempting registration with:', { username, fullName, email });
+
     try {
-        const response = await fetch('/api/auth/register', {
+        const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
-                username, 
-                password, 
-                fullName, 
+            body: JSON.stringify({
+                username,
+                password,
+                fullName,
                 email,
                 role: 'ROLE_STUDENT'
             })
         });
 
-        if (response.ok) {
-            alert('Registration successful! Please login.');
-            showLogin();
-        } else {
-            alert('Registration failed');
+        console.log('Register response status:', response.status);
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Registration failed');
         }
+        
+        const data = await response.json();
+        console.log('Register response data:', data);
+        
+        alert('Registration successful! Please login.');
+        showLogin();
     } catch (error) {
-        alert('Error during registration');
+        console.error('Registration error:', error);
+        alert('Error during registration: ' + error.message);
     }
 }
 
 function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('role');
     currentUser = null;
-    document.getElementById('username').textContent = '';
-    document.getElementById('adminPanel').classList.add('hidden');
     showLogin();
 }
 
@@ -216,28 +239,4 @@ function displayMyBooks(books) {
             <td>
                 <button onclick="returnBook(${issue.id})">Return</button>
             </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-async function returnBook(issueId) {
-    try {
-        const response = await fetch(`/api/books/return/${issueId}`, {
-            method: 'POST'
-        });
-
-        if (response.ok) {
-            alert('Book returned successfully');
-            loadBooks();
-            loadMyBooks();
-        } else {
-            alert('Error returning book');
-        }
-    } catch (error) {
-        alert('Error returning book');
-    }
-}
-
-// Initial setup
-showLogin();
+        `
