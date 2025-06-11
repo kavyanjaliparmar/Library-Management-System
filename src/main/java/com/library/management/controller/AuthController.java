@@ -22,29 +22,37 @@ public class AuthController {
     private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
-        try {
-            User user = authService.authenticate(credentials.get("username"), credentials.get("password"));
-            String token = jwtTokenProvider.generateToken(user);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", token);
-            response.put("username", user.getUsername());
-            response.put("role", user.getRole());
-            
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Invalid username or password");
-        }
-    }
+public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+    try {
+        User user = authService.authenticate(credentials.get("username"), credentials.get("password"));
+        String token = jwtTokenProvider.generateToken(user.getUsername());
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        try {
-            User registeredUser = authService.register(user);
-            return ResponseEntity.ok(registeredUser);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Registration failed: " + e.getMessage());
-        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("username", user.getUsername());
+        response.put("role", user.getRole());
+
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        Map<String, String> error = new HashMap<>();
+        e.printStackTrace();
+        error.put("message", "Invalid username or password");
+        return ResponseEntity.badRequest().body(error);
+
+            }
+}
+
+@PostMapping("/register")
+public ResponseEntity<?> register(@RequestBody User user) {
+    try {
+        User registeredUser = authService.register(user);
+        return ResponseEntity.ok(registeredUser);
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body(Map.of("message", "Registration failed: " + e.getMessage()));
     }
+}
+
+
+
 }
