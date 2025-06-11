@@ -1,6 +1,6 @@
 -- Insert Admin User
 INSERT INTO users (username, password, full_name, email, role)
-SELECT 'admin', '$2a$10$Pn2T3.RdoKz7PFx9TpNxYO8j2h4gGp8jPC1Aj8Ey3hta/hgHnUEqW', 'System Administrator', 'admin@library.com', 'ROLE_ADMIN'
+SELECT 'admin', '$2a$10$/8vmgF9fNqKJdrMWAiXE3Or344bdkXuSETqI8J6k.cOtFIaxXgbYy', 'System Administrator', 'admin@library.com', 'ROLE_ADMIN'
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@library.com');
 
 -- Insert Sample Students
